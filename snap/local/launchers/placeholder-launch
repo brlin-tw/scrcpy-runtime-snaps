@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Placeholder launcher for the fake snap app
+#
+# Copyright 2026 林博仁(Buo-ren, Lin) <buo.ren.lin@gmail.com>
+# SPDX-License-Identifier: Apache-2.0
+
+if ! set -e; then
+    printf \
+        'Error: Unable to set -e.\n' \
+        1>&2
+    exit 1
+fi
+
+printf \
+    "Error: This command isn't meant to be run directly.\\n" \
+    1>&2
+exit 1

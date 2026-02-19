@@ -94,3 +94,6 @@
 
 # Don't track unpacked product files
 /scrcpy-runtime-snap-*/
+
+# Don't track built snap packages
+/*.snap

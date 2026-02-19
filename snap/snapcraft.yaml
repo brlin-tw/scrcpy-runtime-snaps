@@ -1,0 +1,186 @@
+# Snapcraft project file for the scrcpy runtime snap for the core24 base.
+#
+# Copyright 2026 Buo-ren Lin <buo.ren.lin@gmail.com>
+# SPDX-License-Identifier: Apache-2.0
+#
+# This file is based on the Snapcraft project file of the unofficial scrcpy snap.
+name: scrcpy-runtime-core24
+title: The unofficial scrcpy runtime snap(c24)
+summary: Provides easy integration of the scrcpy runtime into other snaps.
+description: |
+  This snap provides the scrcpy runtime, which can be used by other snaps to integrate scrcpy without having to build it from source or bundle it with their own content.
+
+  This snap shouldn't be installed manually, but rather pulled in as a snap dependency during install/upgrade time.
+
+  This snap is build for the core24 base, for snaps using different bases, please use the corresponding runtime snap(if available) (e.g. scrcpy-runtime-core22 for core22-based snaps).
+contact: https://gitlab.com/brlin/scrcpy-runtime-snaps/-/issues
+issues: https://gitlab.com/brlin/scrcpy-runtime-snaps/-/issues
+source-code: https://gitlab.com/brlin/scrcpy-runtime-snaps
+website: https://gitlab.com/brlin/scrcpy-runtime-snaps
+
+license: Apache-2.0
+grade: stable
+confinement: strict
+compression: lzo
+version: 3.3.4
+
+base: core24
+
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
+  arm64:
+    build-on: [arm64]
+    build-for: [arm64]
+  armhf:
+    build-on: [armhf]
+    build-for: [armhf]
+
+apps:
+  # The main usage of this placeholder app is to declare the gnome extension so we
+  # don't need to specify the underlying details.
+  placeholder:
+    command: usr/local/bin/scrcpy
+    command-chain:
+      - bin/placeholder-launch
+    extensions:
+      - gnome
+    environment:
+      LD_LIBRARY_PATH: ${SNAP}/ffmpeg-platform/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}:${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/android:${SNAP}/gnome-platform/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/blas:${SNAP}/gnome-platform/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/lapack:${SNAP}/gnome-platform/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/libproxy:${LD_LIBRARY_PATH}
+
+parts:
+  scrcpy-server:
+    plugin: nil
+    build-packages:
+      - curl
+      - jq
+    override-pull: >-
+      SCRCPY_SERVER_VERSION="${SNAPCRAFT_PROJECT_VERSION}"
+      "${CRAFT_PROJECT_DIR}/snap/local/scriptlets/pull-scrcpy-server.sh"
+    override-build: |
+      mkdir -p "${SNAPCRAFT_PART_INSTALL}/usr/local/share/scrcpy"
+      cp scrcpy-server-v* "${SNAPCRAFT_PART_INSTALL}/usr/local/share/scrcpy/scrcpy-server"
+
+  scrcpy:
+    source: https://github.com/Genymobile/scrcpy.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION
+    plugin: meson
+    meson-parameters:
+      - --buildtype=release
+      - --strip
+      - -Db_lto=true
+      - -Dcompile_server=false
+    build-snaps:
+      - ffmpeg-2404-sdk
+      - gnome-46-2404-sdk
+    build-environment:
+      - PKG_CONFIG_PATH: /snap/ffmpeg-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
+      - LD_LIBRARY_PATH: /snap/ffmpeg-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+      - PATH: /snap/ffmpeg-2404-sdk/current/usr/bin${PATH:+:$PATH}
+    build-packages:
+      - libsdl2-dev
+      - libswresample-dev
+      - libusb-1.0-0-dev
+    stage-packages:
+      - adb
+      - libasound2
+      - libglu1-mesa
+      - libglut3.12
+
+      # Provided by the FFmpeg content snap
+      #- libsdl2-2.0-0
+
+      # Provided by gnome-platform
+      #- libblas3
+      #- libslang2
+      #- libusb-1.0-0
+    stage:
+      - -usr/lib/*/libcaca++.so*
+      - -usr/lib/*/libcjson_utils.so*
+      - -usr/lib/*/libcairo-gobject.so*
+      - -usr/lib/*/libcairo.so*
+      - -usr/lib/*/libfftw3_omp.so*
+      - -usr/lib/*/libfftw3_threads.so*
+      - -usr/lib/*/libflite_cmu_grapheme_lang.so*
+      - -usr/lib/*/libflite_cmu_grapheme_lex.so*
+      - -usr/lib/*/libflite_cmu_indic_lang.so*
+      - -usr/lib/*/libflite_cmu_indic_lex.so*
+      - -usr/lib/*/libflite_cmu_time_awb.so*
+      - -usr/lib/*/libgdk_pixbuf-*.so*
+      - -usr/lib/*/libharfbuzz.so*
+      - -usr/lib/*/libhwy_contrib.so*
+      - -usr/lib/*/libhwy_test.so*
+      - -usr/lib/*/libicui18n.so*
+      - -usr/lib/*/libicuio.so*
+      - -usr/lib/*/libicutu.so*
+      - -usr/lib/*/libicutest.so*
+      - -usr/lib/*/libjacknet.so*
+      - -usr/lib/*/libjackserver.so*
+      - -usr/lib/*/liboss4-salsa.so*
+      - -usr/lib/*/libpango-*.so*
+      - -usr/lib/*/libpangocairo-*.so*
+      - -usr/lib/*/libpangoft*.so*
+      - -usr/lib/*/libpixman-*.so*
+      - -usr/lib/*/libpulse-simple.so*
+      - -usr/lib/*/librsvg*.so*
+      - -usr/lib/*/libsphinxad.so*
+      - -usr/lib/*/libtheora.so*
+      - -usr/lib/*/libzvbi-chains.so*
+      - -usr/share/fonts
+
+      # Provided by the mesa-2404 content snap
+      - -usr/lib/*/libdrm_amdgpu.so*
+      - -usr/lib/*/libdrm_intel.so*
+      - -usr/lib/*/libgallium-*.so*
+
+  cleanup:
+    after:
+      - scrcpy
+    plugin: nil
+    build-snaps:
+      - core24
+      - ffmpeg-2404
+      - gnome-46-2404
+      - mesa-2404
+    override-prime: |
+      set -eu
+
+      for snap in core24 ffmpeg-2404 gnome-46-2404 mesa-2404; do
+        if ! "${CRAFT_PROJECT_DIR}/snap/local/scriptlets/drop-content-snap-duplicate-files.sh" "${snap}"; then
+          printf \
+              'Error: Unable to drop the duplicate files in the snap installation directory "%s".\n' \
+              "${snap}" \
+              1>&2
+          exit 1
+        fi
+      done
+
+  lp-bug-2016358-workaround:
+    plugin: nil
+    override-prime: |
+      set -eu
+      craftctl default
+      mkdir -p "${CRAFT_PRIME}/"{ffmpeg-2404,gpu-2404,data-dir,data-dir/{icons,sounds,themes}}
+
+  # Launcher programs to fix problems at runtime
+  launchers:
+    source: snap/local/launchers
+    plugin: dump
+    organize:
+      '*': bin/
+
+lint:
+  ignore:
+    - metadata:
+        # Not available yet
+        - donation
+    - library:
+        # Required by the SDL2 library to prevent the "ERROR: Could not create renderer: Couldn't find matching render driver" error
+        - usr/lib/*/libGLX_mesa.so*
+        - usr/lib/*/libxcb-glx.so*
+
+        # Required for core functionality at least on amd64 architecture
+        # If not staged, the application will fail to start with the following error:
+        # "ERROR: Could not create renderer: Couldn't find matching render driver"
+        - usr/lib/*/libXxf86vm.so*
