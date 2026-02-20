@@ -73,21 +73,30 @@ parts:
       - -Dcompile_server=false
     build-snaps:
       - ffmpeg-2404-sdk
-      - gnome-46-2404-sdk
     build-environment:
       - PKG_CONFIG_PATH: /snap/ffmpeg-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
       - LD_LIBRARY_PATH: /snap/ffmpeg-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
       - PATH: /snap/ffmpeg-2404-sdk/current/usr/bin${PATH:+:$PATH}
+    # https://github.com/Genymobile/scrcpy/blob/master/doc/build.md#debianubuntu
     build-packages:
+      - gcc
+      - git
       - libsdl2-dev
-      - libswresample-dev
       - libusb-1.0-0-dev
+      - pkg-config
+      - meson
+      - ninja-build
+
+      # Provided by the FFmpeg SDK content snap
+      #- libavcodec-dev
+      #- libavdevice-dev
+      #- libavformat-dev
+      #- libavutil-dev
+      #- libswresample-dev
+    override-build: "${CRAFT_PROJECT_DIR}/snap/local/scriptlets/build-scrcpy.sh"
     stage-packages:
-      - adb
       - libasound2
       - libblas3
-      - libglu1-mesa
-      - libglut3.12
       - libsdl2-2.0-0
       - libslang2
       - libusb-1.0-0
@@ -136,13 +145,11 @@ parts:
     plugin: nil
     build-snaps:
       - core24
-      - ffmpeg-2404
-      - gnome-46-2404
       - mesa-2404
     override-prime: |
       set -eu
 
-      for snap in core24 ffmpeg-2404 gnome-46-2404 mesa-2404; do
+      for snap in core24 mesa-2404; do
         if ! "${CRAFT_PROJECT_DIR}/snap/local/scriptlets/drop-content-snap-duplicate-files.sh" "${snap}"; then
           printf \
               'Error: Unable to drop the duplicate files in the snap installation directory "%s".\n' \
