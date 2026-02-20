@@ -81,6 +81,52 @@ parts:
       #- libavformat-dev
       #- libavutil-dev
       #- libswresample-dev
+
+      # WORKAROUND: The following packages fixes "undefined reference"
+      # linking errors caused by the FFmpeg SDK content snap, which
+      # doesn't ship the required files of some of the non-FFmpeg
+      # libraries:
+      # https://github.com/snapcrafters/ffmpeg-2404-sdk/issues/41
+      - libarchive13t64
+      - libv4l-0t64
+
+      # Indirect runtime dependencies, many of this should be covered
+      # by the desktop content snaps, but we still need to declare them
+      # here to make sure at least one of them ships the required
+      # files:
+      - libasound2t64
+      - libcaca0
+      - libcairo2
+      - libfontconfig1
+      - libfreetype6
+      - libgbm1
+      - libharfbuzz0b
+      - liblcms2-2
+      - libopenjp2-7
+      - libraw1394-11
+      - librsvg2-2
+      - libspeex1
+      - libtheora0
+      - libtiff6
+      - libtwolame0
+      - libva-drm2
+      - libva-x11-2
+      - libva2
+      - libvdpau1
+      - libvpx9
+      - libwayland-client0
+      - libwayland-cursor0
+      - libwayland-egl1
+      - libwebp7
+      - libwebpmux3
+      - libx11-6
+      - libx11-xcb1
+      - libxau6
+      - libxcb1
+      - libxdmcp6
+      - libxext6
+      - libxfixes3
+
     override-build: "${CRAFT_PROJECT_DIR}/snap/local/scriptlets/build-scrcpy.sh"
     stage-packages:
       - libasound2
