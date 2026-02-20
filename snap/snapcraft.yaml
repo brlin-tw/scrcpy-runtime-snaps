@@ -37,18 +37,6 @@ platforms:
     build-on: [armhf]
     build-for: [armhf]
 
-apps:
-  # The main usage of this placeholder app is to declare the gnome extension so we
-  # don't need to specify the underlying details.
-  placeholder:
-    command: usr/local/bin/scrcpy
-    command-chain:
-      - bin/placeholder-launch
-    extensions:
-      - gnome
-    environment:
-      LD_LIBRARY_PATH: ${SNAP}/ffmpeg-platform/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}:${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/android:${SNAP}/gnome-platform/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/blas:${SNAP}/gnome-platform/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/lapack:${SNAP}/gnome-platform/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/libproxy:${LD_LIBRARY_PATH}
-
 parts:
   scrcpy-server:
     plugin: nil
@@ -165,13 +153,6 @@ parts:
       set -eu
       craftctl default
       mkdir -p "${CRAFT_PRIME}/"{ffmpeg-2404,gpu-2404,data-dir,data-dir/{icons,sounds,themes}}
-
-  # Launcher programs to fix problems at runtime
-  launchers:
-    source: snap/local/launchers
-    plugin: dump
-    organize:
-      '*': bin/
 
 lint:
   ignore:
