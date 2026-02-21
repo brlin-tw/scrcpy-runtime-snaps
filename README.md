@@ -45,7 +45,7 @@ In your consumer snap's Snapcraft project file:
     apps:
       app-name:
         environment:
-          LD_LIBRARY_PATH: ${SNAP}/scrcpy-runtime/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}:${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/android:${SNAP}/gnome-platform/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}:${LD_LIBRARY_PATH}
+          LD_LIBRARY_PATH: ${SNAP}/scrcpy-runtime/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}:${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/android:${LD_LIBRARY_PATH}
           PATH: ${SNAP}/scrcpy-runtime/usr/local/bin:${PATH}
         plugs:
           # For ADB and ADB daemon communication
@@ -63,7 +63,7 @@ In your consumer snap's Snapcraft project file:
         environment:
           # NOTE: The gnome-platform content snap entry provides libprotobuf
           # required by the adb binary.
-          LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/android:${SNAP}/gnome-platform/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}:${LD_LIBRARY_PATH}
+          LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/android:${LD_LIBRARY_PATH}
         plugs:
           - network-bind
           - raw-usb
