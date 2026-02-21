@@ -99,8 +99,6 @@ In your consumer snap's Snapcraft project file:
       adb:
         command: usr/bin/adb
         environment:
-          # NOTE: The gnome-platform content snap entry provides libprotobuf
-          # required by the adb binary.
           LD_LIBRARY_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/android:${LD_LIBRARY_PATH}
         plugs:
           - adb-support
