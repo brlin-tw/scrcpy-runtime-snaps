@@ -94,12 +94,6 @@ parts:
       # libraries:
       # https://github.com/snapcrafters/ffmpeg-2404-sdk/issues/41
       - libarchive13t64
-      - libv4l-0t64
-
-      # Indirect runtime dependencies, many of this should be covered
-      # by the desktop content snaps, but we still need to declare them
-      # here to make sure at least one of them ships the required
-      # files:
       - libasound2t64
       - libcaca0
       - libcairo2
@@ -115,6 +109,7 @@ parts:
       - libtheora0
       - libtiff6
       - libtwolame0
+      - libv4l-0t64
       - libva-drm2
       - libva-x11-2
       - libva2
@@ -135,12 +130,28 @@ parts:
 
     override-build: "${CRAFT_PROJECT_DIR}/snap/local/scriptlets/build-scrcpy.sh"
     stage-packages:
-      - libasound2
-      - libblas3
+      - libasound2t64
       - libsdl2-2.0-0
-      - libslang2
       - libusb-1.0-0
+
+      # The following are provided by the mesa-2404 snap
+      #- libgl1
+      #- libglx0
+      #- libva-drm2
+      #- libva-x11-2
+      #- libva2
+      #- libvdpau1
+      #- libwayland-client0
+      #- libwayland-cursor0
+      #- libwayland-egl1
+      #- libx11-6
+      #- libx11-xcb1
+      #- libxcb1
+      #- libxext6
+      #- libxfixes3
     stage:
+      - -usr/bin/update-mime-database
+      - -usr/lib/*/libasyncns.so*
       - -usr/lib/*/libcaca++.so*
       - -usr/lib/*/libcjson_utils.so*
       - -usr/lib/*/libcairo-gobject.so*
@@ -152,7 +163,9 @@ parts:
       - -usr/lib/*/libflite_cmu_indic_lang.so*
       - -usr/lib/*/libflite_cmu_indic_lex.so*
       - -usr/lib/*/libflite_cmu_time_awb.so*
+      - -usr/lib/*/libfribidi.so*
       - -usr/lib/*/libgdk_pixbuf-*.so*
+      - -usr/lib/*/libgraphite*.so*
       - -usr/lib/*/libharfbuzz.so*
       - -usr/lib/*/libhwy_contrib.so*
       - -usr/lib/*/libhwy_test.so*
@@ -169,8 +182,12 @@ parts:
       - -usr/lib/*/libpixman-*.so*
       - -usr/lib/*/libpulse-simple.so*
       - -usr/lib/*/librsvg*.so*
+      - -usr/lib/*/libsamplerate.so*
+      - -usr/lib/*/libsndfile.so*
+      - -usr/lib/*/libthai.so*
       - -usr/lib/*/libsphinxad.so*
       - -usr/lib/*/libtheora.so*
+      - -usr/lib/*/libxcb-render.so*
       - -usr/lib/*/libzvbi-chains.so*
       - -usr/share/fonts
 
@@ -178,6 +195,15 @@ parts:
       - -usr/lib/*/libdrm_amdgpu.so*
       - -usr/lib/*/libdrm_intel.so*
       - -usr/lib/*/libgallium-*.so*
+
+      # Provided by the FFmpeg content snap
+      - -usr/lib/*/libFLAC.so*
+      - -usr/lib/*/libmp3lame.so*
+      - -usr/lib/*/libmpg123.so*
+      - -usr/lib/*/libogg.so*
+      - -usr/lib/*/libopus.so*
+      - -usr/lib/*/libvorbis.so*
+      - -usr/lib/*/libvorbisenc.so*
 
   cleanup:
     after:
@@ -213,3 +239,25 @@ lint:
         # If not staged, the application will fail to start with the following error:
         # "ERROR: Could not create renderer: Couldn't find matching render driver"
         - usr/lib/*/libXxf86vm.so*
+
+        # Used in ALSA audio output?
+        - usr/lib/*/libasound.so*
+
+        # Dependencies provided by the FFmpeg and mesa
+        # content snaps
+        - usr/local/bin/scrcpy
+
+        # Dependencies provided by the mesa content snap
+        - usr/lib/*/caca/libgl_plugin.so*
+        - usr/lib/*/libpulse.so*
+        - usr/lib/*/libdecor-*.so*
+        - usr/lib/*/libXcursor.so*
+        - usr/lib/*/libXi.so*
+        - usr/lib/*/libXss.so*
+        - usr/lib/*/libXrandr.so*
+        - usr/lib/*/libXrender.so*
+        - usr/lib/*/pulseaudio/libpulsecommon-*.so*
+
+        # Dependencies of the scrcpy program
+        - usr/lib/*/libSDL2-*.so*
+        - usr/lib/*/libusb-1.0.so*
