@@ -11,7 +11,13 @@ Provide easier integration of the built scrcpy runtime into other snaps.
 
 The following are the prerequisites for using this runtime snap:
 
-* Your snap must be built for the `core24` base, as this runtime snap is built for the `core24` base.  For snaps using different bases, please follow the corresponding documentation in the corresponding Git branches of this repository (e.g. `core22` branch for `core22`-based snaps, if available).
+* Your snap must be built for the `core24` base.
+
+  For snaps using different bases, please follow the corresponding documentation in the corresponding Git branches of this repository (e.g. `core22` branch for `core22`-based snaps, if available).
+* Only the following architectures are supported at the moment:
+    + `amd64`
+    + `arm64`
+    + `armhf`
 
 Currently only snap using the `gnome` extension is tested, for other extensions this content snap may or may not work.
 
