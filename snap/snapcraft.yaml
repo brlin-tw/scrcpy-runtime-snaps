@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # This file is based on the Snapcraft project file of the unofficial scrcpy snap.
-name: scrcpy-runtime-core24
+name: scrcpy-runtime-2404
 title: The unofficial scrcpy runtime snap(c24)
 summary: Provides easy integration of the scrcpy runtime into other snaps.
 description: |
@@ -12,7 +12,7 @@ description: |
 
   This snap shouldn't be installed manually, but rather pulled in as a snap dependency during install/upgrade time.
 
-  This snap is build for the core24 base, for snaps using different bases, please use the corresponding runtime snap(if available) (e.g. scrcpy-runtime-core22 for core22-based snaps).
+  This snap is build for the core24 base, for snaps using different bases, please use the corresponding runtime snap(if available) (e.g. scrcpy-runtime-2204 for core22-based snaps).
 contact: https://gitlab.com/brlin/scrcpy-runtime-snaps/-/issues
 issues: https://gitlab.com/brlin/scrcpy-runtime-snaps/-/issues
 source-code: https://gitlab.com/brlin/scrcpy-runtime-snaps
