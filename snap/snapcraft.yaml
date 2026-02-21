@@ -37,6 +37,12 @@ platforms:
     build-on: [armhf]
     build-for: [armhf]
 
+slots:
+  scrcpy-runtime-2404:
+    interface: content
+    read:
+      - /
+
 parts:
   scrcpy-server:
     plugin: nil
