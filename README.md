@@ -37,6 +37,18 @@ In your consumer snap's Snapcraft project file:
         plugin: nil
         stage-packages:
           - adb
+          - android-libbase
+          - android-libboringssl
+          - android-libcutils
+          - android-liblog
+          - android-libziparchive
+          - libbrotli1
+          - libcap2
+          - liblz4-1
+          - libprotobuf32t64
+          - libudev1
+          - libusb-1.0-0
+          - libzstd1
     ```
 
 1. In the app definition that needs to use the scrcpy runtime, _merge_ the following content:
