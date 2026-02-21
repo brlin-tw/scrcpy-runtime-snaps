@@ -199,13 +199,6 @@ parts:
         fi
       done
 
-  lp-bug-2016358-workaround:
-    plugin: nil
-    override-prime: |
-      set -eu
-      craftctl default
-      mkdir -p "${CRAFT_PRIME}/"{ffmpeg-2404,gpu-2404,data-dir,data-dir/{icons,sounds,themes}}
-
 lint:
   ignore:
     - metadata:
