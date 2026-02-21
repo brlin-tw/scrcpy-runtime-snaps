@@ -48,10 +48,36 @@ In your consumer snap's Snapcraft project file:
           LD_LIBRARY_PATH: ${SNAP}/scrcpy-runtime/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}:${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/android:${LD_LIBRARY_PATH}
           PATH: ${SNAP}/scrcpy-runtime/usr/local/bin:${PATH}
         plugs:
-          # For ADB and ADB daemon communication
+          # For running the Android Debug Bridge (adb) and
+          # connecting the Android devices over USB or TCP/IP.
+          # https://github.com/Genymobile/scrcpy/blob/master/doc/connection.md
           - adb-support
+          - network
           - network-bind
           - raw-usb
+
+          # For scrcpy audio forwarding functionality.
+          # https://github.com/Genymobile/scrcpy/blob/master/doc/audio.md
+          - alsa
+          - audio-playback
+          - pulseaudio
+
+          # For scrcpy v4l2 emulation support.
+          # https://github.com/Genymobile/scrcpy/blob/master/doc/v4l2.md
+          - camera
+
+          # For scrcpy video & audio recording support.
+          # https://github.com/Genymobile/scrcpy/blob/master/doc/recording.md
+          - home
+          - removable-media
+
+          # For scrcpy gamepad simulation support.
+          # https://github.com/Genymobile/scrcpy/blob/master/doc/gamepad.md
+          - joystick
+
+          # Legacy desktop support.
+          # https://github.com/canonical/snapd/blob/master/interfaces/builtin/unity7.go
+          - unity7
     ```
 
 1. Include the following auxillary app definition to let the user to kill the snap-provided ADB daemon easily and for troubleshooting purposes:
