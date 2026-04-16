@@ -57,6 +57,40 @@ In your consumer snap's Snapcraft project file:
           - libzstd1
     ```
 
+1. Merge the following part definition:
+
+    ```yaml
+    parts:
+      # Avoid buggy mount namespace handling in snapd, which can prevent
+      # manually connected content interfaces from appearing in the snap
+      # runtime.
+      # https://bugs.launchpad.net/snapd/+bug/2144666
+      lp-bug-2144666-workaround:
+        plugin: nil
+        override-prime: |
+          set -eu
+          craftctl default
+
+          content_interface_mount_target_dirs=(
+            # From the "gnome" extension
+            "${CRAFT_PRIME}/gpu-2404"
+            "${CRAFT_PRIME}/gpu-2404-2" # mesa-2404 content in spool mode
+            "${CRAFT_PRIME}/data-dir/icons"
+            "${CRAFT_PRIME}/data-dir/sounds"
+            "${CRAFT_PRIME}/data-dir/themes"
+            "${CRAFT_PRIME}/gnome-platform"
+
+            # From the "scrcpy-runtime-2404" content interface
+            "${CRAFT_PRIME}/scrcpy-runtime"
+
+            # From the "ffmpeg-2404" content interface
+            "${CRAFT_PRIME}/ffmpeg-platform"
+          )
+          for dir in "${content_interface_mount_target_dirs[@]}"; do
+            mkdir -p "${dir}"
+          done
+    ```
+
 1. In the app definition that needs to use the scrcpy runtime, _merge_ the following content:
 
     ```yaml
