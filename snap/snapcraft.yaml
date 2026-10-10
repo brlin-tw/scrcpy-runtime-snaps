@@ -65,6 +65,7 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
       - -DSDL_TESTS=OFF
+      - -DSDL_TEST_LIBRARY=OFF
       - -DSDL_STATIC=OFF
       - -DSDL_SHARED=ON
     build-packages:
