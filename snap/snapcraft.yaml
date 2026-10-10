@@ -22,7 +22,7 @@ license: Apache-2.0
 grade: stable
 confinement: strict
 compression: lzo
-version: 3.3.4
+version: 5.0.1
 
 base: core24
 
@@ -56,7 +56,51 @@ parts:
       mkdir -p "${SNAPCRAFT_PART_INSTALL}/usr/local/share/scrcpy"
       cp scrcpy-server-v* "${SNAPCRAFT_PART_INSTALL}/usr/local/share/scrcpy/scrcpy-server"
 
+  sdl3:
+    source: https://github.com/libsdl-org/SDL.git
+    source-tag: release-3.4.12
+    plugin: cmake
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
+      - -DSDL_TESTS=OFF
+      - -DSDL_STATIC=OFF
+      - -DSDL_SHARED=ON
+    build-packages:
+      - cmake
+      - libasound2-dev
+      - libdecor-0-dev
+      - libdrm-dev
+      - libegl1-mesa-dev
+      - libgbm-dev
+      - libgl1-mesa-dev
+      - libgles2-mesa-dev
+      - libibus-1.0-dev
+      - libpipewire-0.3-dev
+      - libpulse-dev
+      - libudev-dev
+      - libwayland-dev
+      - libx11-dev
+      - libxcursor-dev
+      - libxext-dev
+      - libxfixes-dev
+      - libxi-dev
+      - libxkbcommon-dev
+      - libxrandr-dev
+      - libxss-dev
+      - libxtst-dev
+      - ninja-build
+    stage:
+      - usr/include
+      - usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/libSDL3.so*
+      - usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/pkgconfig
+    prime:
+      - usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/libSDL3.so*
+
   scrcpy:
+    after:
+      - sdl3
     source: https://github.com/Genymobile/scrcpy.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION
     plugin: meson
@@ -68,18 +112,18 @@ parts:
     build-snaps:
       - ffmpeg-2404-sdk
     build-environment:
-      - PKG_CONFIG_PATH: /snap/ffmpeg-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
-      - LD_LIBRARY_PATH: /snap/ffmpeg-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+      - PKG_CONFIG_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pkgconfig:$CRAFT_STAGE/usr/local/lib/pkgconfig:$CRAFT_STAGE/usr/local/share/pkgconfig:/snap/ffmpeg-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
+      - LD_LIBRARY_PATH: $CRAFT_STAGE/usr/local/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$CRAFT_STAGE/usr/local/lib:/snap/ffmpeg-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
       - PATH: /snap/ffmpeg-2404-sdk/current/usr/bin${PATH:+:$PATH}
     # https://github.com/Genymobile/scrcpy/blob/master/doc/build.md#debianubuntu
     build-packages:
       - gcc
       - git
-      - libsdl2-dev
       - libusb-1.0-0-dev
-      - pkg-config
+      - libv4l-dev
       - meson
       - ninja-build
+      - pkg-config
 
       # Provided by the FFmpeg SDK content snap
       #- libavcodec-dev
@@ -130,32 +174,14 @@ parts:
 
     override-build: "${CRAFT_PROJECT_DIR}/snap/local/scriptlets/build-scrcpy.sh"
     stage-packages:
-      - libasound2t64
-      - libsdl2-2.0-0
+      - libasound2
+      - libblas3
       - libusb-1.0-0
-
-      # The following are provided by the mesa-2404 snap
-      #- libgl1
-      #- libglx0
-      #- libva-drm2
-      #- libva-x11-2
-      #- libva2
-      #- libvdpau1
-      #- libwayland-client0
-      #- libwayland-cursor0
-      #- libwayland-egl1
-      #- libx11-6
-      #- libx11-xcb1
-      #- libxcb1
-      #- libxext6
-      #- libxfixes3
     stage:
-      - -usr/bin/update-mime-database
-      - -usr/lib/*/libasyncns.so*
       - -usr/lib/*/libcaca++.so*
-      - -usr/lib/*/libcjson_utils.so*
       - -usr/lib/*/libcairo-gobject.so*
       - -usr/lib/*/libcairo.so*
+      - -usr/lib/*/libcjson_utils.so*
       - -usr/lib/*/libfftw3_omp.so*
       - -usr/lib/*/libfftw3_threads.so*
       - -usr/lib/*/libflite_cmu_grapheme_lang.so*
@@ -163,16 +189,14 @@ parts:
       - -usr/lib/*/libflite_cmu_indic_lang.so*
       - -usr/lib/*/libflite_cmu_indic_lex.so*
       - -usr/lib/*/libflite_cmu_time_awb.so*
-      - -usr/lib/*/libfribidi.so*
       - -usr/lib/*/libgdk_pixbuf-*.so*
-      - -usr/lib/*/libgraphite*.so*
       - -usr/lib/*/libharfbuzz.so*
       - -usr/lib/*/libhwy_contrib.so*
       - -usr/lib/*/libhwy_test.so*
       - -usr/lib/*/libicui18n.so*
       - -usr/lib/*/libicuio.so*
-      - -usr/lib/*/libicutu.so*
       - -usr/lib/*/libicutest.so*
+      - -usr/lib/*/libicutu.so*
       - -usr/lib/*/libjacknet.so*
       - -usr/lib/*/libjackserver.so*
       - -usr/lib/*/liboss4-salsa.so*
@@ -182,12 +206,8 @@ parts:
       - -usr/lib/*/libpixman-*.so*
       - -usr/lib/*/libpulse-simple.so*
       - -usr/lib/*/librsvg*.so*
-      - -usr/lib/*/libsamplerate.so*
-      - -usr/lib/*/libsndfile.so*
-      - -usr/lib/*/libthai.so*
       - -usr/lib/*/libsphinxad.so*
       - -usr/lib/*/libtheora.so*
-      - -usr/lib/*/libxcb-render.so*
       - -usr/lib/*/libzvbi-chains.so*
       - -usr/share/fonts
 
@@ -195,35 +215,38 @@ parts:
       - -usr/lib/*/libdrm_amdgpu.so*
       - -usr/lib/*/libdrm_intel.so*
       - -usr/lib/*/libgallium-*.so*
+  adb:
+    plugin: nil
+    stage-packages:
+      - adb
+      - android-libbase
+      - android-libboringssl
+      - android-libcutils
+      - android-liblog
+      - android-libziparchive
+      - libbrotli1
+      - libcap2
+      - liblz4-1
+      - libprotobuf32t64
+      - libudev1
+      - libusb-1.0-0
+      - libzstd1
+    stage:
+      - -usr/lib/x86_64-linux-gnu/libpsx.so*
 
-      # Provided by the FFmpeg content snap
-      - -usr/lib/*/libFLAC.so*
-      - -usr/lib/*/libmp3lame.so*
-      - -usr/lib/*/libmpg123.so*
-      - -usr/lib/*/libogg.so*
-      - -usr/lib/*/libopus.so*
-      - -usr/lib/*/libvorbis.so*
-      - -usr/lib/*/libvorbisenc.so*
-
-  cleanup:
+  gpu-2404:
     after:
       - scrcpy
-    plugin: nil
-    build-snaps:
-      - core24
-      - mesa-2404
+      - sdl3
+    source: https://github.com/canonical/gpu-snap.git
+    plugin: dump
     override-prime: |
-      set -eu
-
-      for snap in core24 mesa-2404; do
-        if ! "${CRAFT_PROJECT_DIR}/snap/local/scriptlets/drop-content-snap-duplicate-files.sh" "${snap}"; then
-          printf \
-              'Error: Unable to drop the duplicate files in the snap installation directory "%s".\n' \
-              "${snap}" \
-              1>&2
-          exit 1
-        fi
-      done
+      craftctl default
+      ${CRAFT_PART_SRC}/bin/gpu-2404-cleanup mesa-2404
+      # Workaround for https://bugs.launchpad.net/snapd/+bug/2055273
+      mkdir -p "${CRAFT_PRIME}/gpu-2404"
+    prime:
+      - bin/gpu-2404-wrapper
 
 lint:
   ignore:
@@ -247,17 +270,5 @@ lint:
         # content snaps
         - usr/local/bin/scrcpy
 
-        # Dependencies provided by the mesa content snap
-        - usr/lib/*/caca/libgl_plugin.so*
-        - usr/lib/*/libpulse.so*
-        - usr/lib/*/libdecor-*.so*
-        - usr/lib/*/libXcursor.so*
-        - usr/lib/*/libXi.so*
-        - usr/lib/*/libXss.so*
-        - usr/lib/*/libXrandr.so*
-        - usr/lib/*/libXrender.so*
-        - usr/lib/*/pulseaudio/libpulsecommon-*.so*
-
         # Dependencies of the scrcpy program
-        - usr/lib/*/libSDL2-*.so*
-        - usr/lib/*/libusb-1.0.so*
+        - usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/libSDL3.so*
